@@ -1,16 +1,17 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import Login from './pages/Login';
-import './App.css';
 
+import './App.css';
+import Login from './pages/Login';
+import Config from './pages/Config';
 import Trivia from './pages/Trivia';
 
 export default function App() {
   return (
     <Switch>
       <Route exact path="/" component={ Login } />
-
       <Route exact path="/trivia" component={ Trivia } />
+      <Route exact path="/config" component={ Config } />
     </Switch>
   );
 }
