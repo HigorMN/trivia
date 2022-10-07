@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
+import callAPI from '../services/callAPI';
 
 export default class Login extends Component {
   state = {
     isDisabled: true,
+    redirect: false,
     playerName: '',
     email: '',
   };
@@ -18,13 +21,15 @@ export default class Login extends Component {
     });
   };
 
-  handleSubmit = (event) => {
+  handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('oi');
+    this.setState({ isDisabled: true });
+    await callAPI();
+    this.setState({ redirect: true });
   };
 
   render() {
-    const { isDisabled, playerName, email } = this.state;
+    const { isDisabled, playerName, email, redirect } = this.state;
     return (
       <main>
         <form
@@ -54,6 +59,9 @@ export default class Login extends Component {
             Play
           </button>
         </form>
+        {
+          redirect && <Redirect to="/trivia" />
+        }
       </main>
     );
   }
