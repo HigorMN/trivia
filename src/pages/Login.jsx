@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import callAPI from '../services/callAPI';
 
 export default class Login extends Component {
   state = {
@@ -18,9 +19,10 @@ export default class Login extends Component {
     });
   };
 
-  handleSubmit = (event) => {
+  handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('oi');
+    this.setState({ isDisabled: true });
+    await callAPI();
   };
 
   render() {
