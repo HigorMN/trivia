@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
+import ButtonConfig from '../components/buttonConfig';
 import callAPI from '../services/callAPI';
 
 export default class Login extends Component {
@@ -59,6 +60,7 @@ export default class Login extends Component {
             Play
           </button>
         </form>
+        <ButtonConfig />
         {
           redirect && <Redirect to="/trivia" />
         }
