@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
 import ButtonConfig from '../components/buttonConfig';
+import gravatarEmail from '../redux/action/gravatarEmail';
 import callAPI from '../services/callAPI';
 
-export default class Login extends Component {
+class Login extends Component {
   state = {
     isDisabled: true,
     redirect: false,
@@ -24,6 +28,11 @@ export default class Login extends Component {
 
   handleSubmit = async (event) => {
     event.preventDefault();
+
+    const { dispatch } = this.props;
+    const { email, playerName } = this.state;
+    dispatch(gravatarEmail(email, playerName));
+
     this.setState({ isDisabled: true });
     await callAPI();
     this.setState({ redirect: true });
@@ -61,10 +70,14 @@ export default class Login extends Component {
           </button>
         </form>
         <ButtonConfig />
-        {
-          redirect && <Redirect to="/trivia" />
-        }
+        {redirect && <Redirect to="/trivia" />}
       </main>
     );
   }
 }
+
+Login.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+};
+
+export default connect()(Login);

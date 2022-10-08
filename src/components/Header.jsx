@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import md5 from 'crypto-js/md5';
 
-export default class Header extends Component {
+class Header extends Component {
   state = {
-    token: '',
+    generatedHash: '',
   };
 
   componentDidMount() {
@@ -10,22 +13,36 @@ export default class Header extends Component {
   }
 
   getTokenLocalStorage = () => {
-    const token = localStorage.getItem('token');
-    this.setState({ token });
+    const { email } = this.props;
+    const generatedHash = md5(email).toString();
+    this.setState({ generatedHash });
   };
 
   render() {
-    const { token } = this.state;
+    const { generatedHash } = this.state;
+    const { playerName } = this.props;
     return (
       <header>
         <img
-          src={ `https://www.gravatar.com/avatar/${token}` }
+          src={ `https://www.gravatar.com/avatar/${generatedHash}` }
           alt="Imagem do Gravatar"
           data-testid="header-profile-picture"
         />
-        <h1 data-testid="header-player-name">PlayerName</h1>
+        <h1 data-testid="header-player-name">{playerName}</h1>
         <p data-testid="header-score">0</p>
       </header>
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  playerName: state.gravatar.name,
+  email: state.gravatar.email,
+});
+
+Header.propTypes = {
+  email: PropTypes.string.isRequired,
+  playerName: PropTypes.string.isRequired,
+};
+
+export default connect(mapStateToProps)(Header);
