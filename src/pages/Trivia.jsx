@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import Header from '../components/Header';
 import getQuestionsAPI from '../services/getQuestionsAPI';
 
-const TIMER = 20000;
+const TIMER = 10000;
 const FOUR = 4;
 
 export default class Trivia extends Component {
@@ -13,6 +13,8 @@ export default class Trivia extends Component {
     question: '',
     index: 0,
     alternatives: [],
+    buttonGreen: '',
+    buttonRed: '',
   };
 
   componentDidMount() {
@@ -30,6 +32,8 @@ export default class Trivia extends Component {
       setInterval(() => {
         this.setState((state) => ({
           index: state.index === FOUR ? FOUR : state.index + 1,
+          buttonGreen: '',
+          buttonRed: '',
         }), () => {
           this.questionAPI(reponseTriviaAPI);
         });
@@ -54,8 +58,13 @@ export default class Trivia extends Component {
       category, question, alternatives, correctAnswer });
   };
 
+  handleClick = () => {
+    this.setState({ buttonGreen: 'button-green', buttonRed: 'button-red' });
+  };
+
   render() {
     const { invalidToken, category, question, alternatives, correctAnswer } = this.state;
+    const { buttonRed, buttonGreen } = this.state;
     return (
       <>
         {invalidToken && <Redirect to="/" />}
@@ -73,6 +82,8 @@ export default class Trivia extends Component {
                   data-testid={
                     e === correctAnswer ? 'correct-answer' : `wrong-answer-${index}`
                   }
+                  className={ e === correctAnswer ? buttonGreen : buttonRed }
+                  onClick={ this.handleClick }
                 >
                   {e}
                 </button>
