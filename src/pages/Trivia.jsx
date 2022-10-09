@@ -3,7 +3,7 @@ import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import Header from '../components/Header';
 import getQuestionsAPI from '../services/getQuestionsAPI';
 
-const TIMER = 10000;
+const TIMER = 30000;
 const FOUR = 4;
 
 export default class Trivia extends Component {
