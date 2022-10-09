@@ -66,15 +66,15 @@ export default class Trivia extends Component {
             <p data-testid="question-text">{question}</p>
           </div>
           <div>
-            {alternatives.map((element, index) => (
+            {alternatives.map((e, index) => (
               <div key={ index } data-testid="answer-options">
                 <button
                   type="button"
                   data-testid={
-                    element === correctAnswer ? 'correct-answer' : `wrong-answer-${index}`
+                    e === correctAnswer ? 'correct-answer' : `wrong-answer-${index}`
                   }
                 >
-                  {element}
+                  {e}
                 </button>
               </div>
             ))}
