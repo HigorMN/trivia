@@ -21,7 +21,7 @@ export default class Trivia extends Component {
 
   creatingGamePage = async () => {
     const reponseTriviaAPI = await getQuestionsAPI();
-    console.log(reponseTriviaAPI);
+
     if (reponseTriviaAPI.length === 0) {
       this.setState({ invalidToken: true });
       localStorage.removeItem('token');
