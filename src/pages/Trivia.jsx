@@ -3,7 +3,8 @@ import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import Header from '../components/Header';
 import getQuestionsAPI from '../services/getQuestionsAPI';
 
-const TIMER = 30000;
+const TIMER = 33000;
+const SECONDS = 1000;
 const FOUR = 4;
 
 export default class Trivia extends Component {
@@ -15,9 +16,12 @@ export default class Trivia extends Component {
     alternatives: [],
     buttonGreen: '',
     buttonRed: '',
+    timer: 30,
+    questionDisabled: false,
   };
 
   componentDidMount() {
+    this.countdownTimer();
     this.creatingGamePage();
   }
 
@@ -34,6 +38,8 @@ export default class Trivia extends Component {
           index: state.index === FOUR ? FOUR : state.index + 1,
           buttonGreen: '',
           buttonRed: '',
+          timer: 30,
+          questionDisabled: false,
         }), () => {
           this.questionAPI(reponseTriviaAPI);
         });
@@ -62,9 +68,18 @@ export default class Trivia extends Component {
     this.setState({ buttonGreen: 'button-green', buttonRed: 'button-red' });
   };
 
+  countdownTimer = () => {
+    setInterval(() => {
+      this.setState((state) => ({
+        timer: state.timer === 0 ? 0 : state.timer - 1,
+        questionDisabled: state.timer < 2,
+      }));
+    }, SECONDS);
+  };
+
   render() {
     const { invalidToken, category, question, alternatives, correctAnswer } = this.state;
-    const { buttonRed, buttonGreen } = this.state;
+    const { buttonRed, buttonGreen, timer, questionDisabled } = this.state;
     return (
       <>
         {invalidToken && <Redirect to="/" />}
@@ -75,6 +90,7 @@ export default class Trivia extends Component {
             <p data-testid="question-text">{question}</p>
           </div>
           <div>
+            <p>{timer}</p>
             {alternatives.map((e, index) => (
               <div key={ index } data-testid="answer-options">
                 <button
@@ -84,6 +100,7 @@ export default class Trivia extends Component {
                   }
                   className={ e === correctAnswer ? buttonGreen : buttonRed }
                   onClick={ this.handleClick }
+                  disabled={ questionDisabled }
                 >
                   {e}
                 </button>
