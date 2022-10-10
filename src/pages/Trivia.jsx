@@ -18,6 +18,7 @@ export default class Trivia extends Component {
     buttonRed: '',
     timer: 30,
     questionDisabled: false,
+    btnNextAppear: false,
   };
 
   componentDidMount() {
@@ -36,11 +37,8 @@ export default class Trivia extends Component {
       setInterval(() => {
         this.setState((state) => ({
           index: state.index === FOUR ? FOUR : state.index + 1,
-          buttonGreen: '',
-          buttonRed: '',
-          timer: 30,
-          questionDisabled: false,
         }), () => {
+          this.resetState();
           this.questionAPI(reponseTriviaAPI);
         });
       }, TIMER);
@@ -65,7 +63,29 @@ export default class Trivia extends Component {
   };
 
   handleClick = () => {
-    this.setState({ buttonGreen: 'button-green', buttonRed: 'button-red' });
+    this.setState({
+      buttonGreen: 'button-green',
+      buttonRed: 'button-red',
+      btnNextAppear: true,
+    });
+  };
+
+  handleNext = () => {
+    this.setState((state) => ({
+      index: state.index + 1,
+    }));
+    this.creatingGamePage();
+    this.resetState();
+  };
+
+  resetState = () => {
+    this.setState({
+      buttonGreen: '',
+      buttonRed: '',
+      timer: 30,
+      questionDisabled: false,
+      btnNextAppear: false,
+    });
   };
 
   countdownTimer = () => {
@@ -79,7 +99,7 @@ export default class Trivia extends Component {
 
   render() {
     const { invalidToken, category, question, alternatives, correctAnswer } = this.state;
-    const { buttonRed, buttonGreen, timer, questionDisabled } = this.state;
+    const { buttonRed, buttonGreen, timer, questionDisabled, btnNextAppear } = this.state;
     return (
       <>
         {invalidToken && <Redirect to="/" />}
@@ -106,6 +126,19 @@ export default class Trivia extends Component {
                 </button>
               </div>
             ))}
+          </div>
+          <div>
+            {
+              btnNextAppear
+            && (
+              <button
+                type="button"
+                data-testid="btn-next"
+                onClick={ this.handleNext }
+              >
+                Next
+              </button>)
+            }
           </div>
         </main>
       </>
