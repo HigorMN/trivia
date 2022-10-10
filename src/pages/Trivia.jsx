@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom/cjs/react-router-dom.min';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
 import getQuestionsAPI from '../services/getQuestionsAPI';
 import { addScore } from '../redux/action/addScore';
@@ -23,6 +23,7 @@ class Trivia extends Component {
     timer: 30,
     questionDisabled: false,
     difficulty: '',
+    btnNextAppear: false,
   };
 
   componentDidMount() {
@@ -41,11 +42,8 @@ class Trivia extends Component {
       setInterval(() => {
         this.setState((state) => ({
           index: state.index === FOUR ? FOUR : state.index + 1,
-          buttonGreen: '',
-          buttonRed: '',
-          timer: 30,
-          questionDisabled: false,
         }), () => {
+          this.resetState();
           this.questionAPI(reponseTriviaAPI);
         });
       }, TIMER);
@@ -75,6 +73,29 @@ class Trivia extends Component {
   handleClick = (e) => {
     this.setState({ buttonGreen: 'button-green', buttonRed: 'button-red' });
     this.checkAnswer(e);
+    this.setState({
+      buttonGreen: 'button-green',
+      buttonRed: 'button-red',
+      btnNextAppear: true,
+    });
+  };
+
+  handleNext = () => {
+    this.setState((state) => ({
+      index: state.index + 1,
+    }));
+    this.creatingGamePage();
+    this.resetState();
+  };
+
+  resetState = () => {
+    this.setState({
+      buttonGreen: '',
+      buttonRed: '',
+      timer: 30,
+      questionDisabled: false,
+      btnNextAppear: false,
+    });
   };
 
   countdownTimer = () => {
@@ -109,7 +130,7 @@ class Trivia extends Component {
 
   render() {
     const { invalidToken, category, question, alternatives, correctAnswer } = this.state;
-    const { buttonRed, buttonGreen, timer, questionDisabled } = this.state;
+    const { buttonRed, buttonGreen, timer, questionDisabled, btnNextAppear } = this.state;
     return (
       <>
         {invalidToken && <Redirect to="/" />}
@@ -137,6 +158,19 @@ class Trivia extends Component {
                 </button>
               </div>
             ))}
+          </div>
+          <div>
+            {
+              btnNextAppear
+            && (
+              <button
+                type="button"
+                data-testid="btn-next"
+                onClick={ this.handleNext }
+              >
+                Next
+              </button>)
+            }
           </div>
         </main>
       </>
