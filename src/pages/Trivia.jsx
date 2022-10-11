@@ -27,27 +27,47 @@ class Trivia extends Component {
   };
 
   componentDidMount() {
-    this.countdownTimer();
     this.creatingGamePage();
+    this.countdownTimer();
+  }
+
+  componentDidUpdate() {
+    const { timer, index } = this.state;
+    if (timer === 0) {
+      clearInterval(this.idTimer);
+    }
+    if (index === FOUR) {
+      clearInterval(this.idGamer);
+    }
   }
 
   creatingGamePage = async () => {
-    const reponseTriviaAPI = await getQuestionsAPI();
-    console.log(reponseTriviaAPI);
-    if (reponseTriviaAPI.length === 0) {
-      this.setState({ invalidToken: true });
-      localStorage.removeItem('token');
-    } else {
-      this.questionAPI(reponseTriviaAPI);
-      setInterval(() => {
-        this.setState((state) => ({
-          index: state.index === FOUR ? FOUR : state.index + 1,
-        }), () => {
-          this.resetState();
-          this.questionAPI(reponseTriviaAPI);
-        });
-      }, TIMER);
-    }
+    const responseTriviaAPI = await getQuestionsAPI();
+    this.setState({ data: responseTriviaAPI }, () => {
+      const { data } = this.state;
+      if (data.length === 0) {
+        this.setState({ invalidToken: true });
+        localStorage.removeItem('token');
+      } else {
+        this.startGame();
+      }
+    });
+  };
+
+  startGame = () => {
+    const { data } = this.state;
+
+    this.questionAPI(data);
+
+    this.idGamer = setInterval(() => {
+      this.setState((state) => ({
+        index: state.index + 1,
+      }), () => {
+        this.resetState();
+        this.questionAPI(data);
+        this.countdownTimer();
+      });
+    }, TIMER);
   };
 
   questionAPI = (reponseTriviaAPI) => {
@@ -77,6 +97,7 @@ class Trivia extends Component {
       buttonGreen: 'button-green',
       buttonRed: 'button-red',
       btnNextAppear: true,
+      questionDisabled: true,
     });
   };
 
@@ -84,7 +105,8 @@ class Trivia extends Component {
     this.setState((state) => ({
       index: state.index + 1,
     }));
-    this.creatingGamePage();
+    clearInterval(this.idGamer);
+    this.startGame();
     this.resetState();
   };
 
@@ -99,11 +121,13 @@ class Trivia extends Component {
   };
 
   countdownTimer = () => {
-    setInterval(() => {
+    this.idTimer = setInterval(() => {
       this.setState((state) => ({
-        timer: state.timer === 0 ? 0 : state.timer - 1,
-        questionDisabled: state.timer < 2,
-      }));
+        timer: state.timer - 1,
+      }), () => {
+        const { timer } = this.state;
+        this.setState({ questionDisabled: timer === 0 });
+      });
     }, SECONDS);
   };
 
@@ -135,7 +159,7 @@ class Trivia extends Component {
       <>
         {invalidToken && <Redirect to="/" />}
         <Header />
-        <main>
+        <main className="center">
           <div>
             <h3 data-testid="question-category">{category}</h3>
             <p data-testid="question-text">{question}</p>
