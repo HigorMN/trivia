@@ -6,16 +6,42 @@ import Header from '../components/Header';
 const minAnswer = 3;
 
 class Feedback extends Component {
+  playAgain = () => {
+    const { history } = this.props;
+    history.push('./');
+  };
+
+  ranking = () => {
+    const { history } = this.props;
+    history.push('/ranking');
+  };
+
   render() {
-    const { answerCorrect } = this.props;
+    const { assertions, score } = this.props;
     return (
       <>
         <Header />
         <div>
           <p data-testid="feedback-text">
-            {answerCorrect < minAnswer ? 'Could be better...' : 'Well Done!' }
+            {assertions < minAnswer ? 'Could be better...' : 'Well Done!' }
           </p>
         </div>
+        <h2 data-testid="feedback-total-score">{ score }</h2>
+        <p data-testid="feedback-total-question">{ assertions }</p>
+        <button
+          type="button"
+          data-testid="btn-play-again"
+          onClick={ this.playAgain }
+        >
+          Play Again
+        </button>
+        <button
+          type="button"
+          data-testid="btn-ranking"
+          onClick={ this.ranking }
+        >
+          Ranking
+        </button>
       </>
 
     );
@@ -23,11 +49,16 @@ class Feedback extends Component {
 }
 
 const mapStateToProps = (state) => ({
-  answerCorrect: state.answer.answerCorrect,
+  score: state.player.score,
+  assertions: state.player.assertions,
 });
 
 Feedback.propTypes = {
-  answerCorrect: PropTypes.number.isRequired,
+  score: PropTypes.number.isRequired,
+  assertions: PropTypes.number.isRequired,
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 export default connect(mapStateToProps)(Feedback);

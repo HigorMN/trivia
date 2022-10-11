@@ -1,7 +1,9 @@
 import { ADD_SCORE } from '../action/addScore';
+import { ANSWER_CORRECT } from '../action/corrects';
 
 const INITIAL_STATE = {
   score: 0,
+  assertions: 0,
 };
 
 const player = (state = INITIAL_STATE, action) => {
@@ -10,6 +12,11 @@ const player = (state = INITIAL_STATE, action) => {
     return {
       ...state,
       score: state.score + action.score,
+    };
+  case ANSWER_CORRECT:
+    return {
+      ...state,
+      assertions: action.answerCorrect,
     };
   default:
     return state;
