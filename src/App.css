@@ -1,7 +1,11 @@
-body {
-  box-sizing: border-box;
+* {
   margin: 0;
   padding: 0;
+}
+
+body {
+  background: #41197f;
+  box-sizing: border-box;
 }
 
 .App {
@@ -68,4 +72,88 @@ body {
 
 .button-red {
   border: 3px solid red;
+}
+
+.center {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+/* 🏠🔽 LOGIN CSS 🔽🏠 */
+.login-main-container {
+  background: url('./images/backgroundLogin.png') no-repeat;
+  background-attachment: fixed;
+  background-blend-mode: multiply;
+  background-size: cover;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+.login-form {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 1px 4px 13px 2px rgba(0, 0, 0, 0.2);
+  flex-direction: column;
+  height: 300px;
+  max-width: 614px;
+  width: 70%;
+}
+
+.login-container-input {
+  margin: 7px auto;
+  max-width: 519px;
+  width: 70%;
+}
+
+.login-input {
+  background-color: white;
+  border: 1px solid #e1e5eb;
+  color: #6b7588;
+  font-size: 14px;
+  font-weight: 400;
+  height: 45px;
+  padding: 0 16px;
+  width: 100%;
+}
+
+.login-input:focus {
+  color: #6b7588;
+  outline: 2px solid #41197f;
+}
+
+.login-button {
+  background: #2fc18c;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  height: 45px;
+  margin: 7px auto;
+  transition: 0.5s;
+  width: 70%;
+}
+
+.login-button:hover {
+  background-color: #8958a3;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.login-button:disabled {
+  background: #e1e5eb;
+  border: 1px solid #e1e5eb;
+  cursor: default;
+  transition: 0.5s;
+}
+
+.login-logo {
+  margin: 6px;
+}
+
+.login-icone-trybe {
+  margin: 36px;
 }

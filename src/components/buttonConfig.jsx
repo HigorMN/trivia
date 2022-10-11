@@ -23,6 +23,7 @@ export default class ButtonConfig extends Component {
           type="button"
           data-testid="btn-settings"
           onClick={ this.handleConfig }
+          className="login-button"
         >
           Configuração
         </button>
