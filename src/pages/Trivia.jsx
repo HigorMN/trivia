@@ -9,6 +9,7 @@ import { addScore } from '../redux/action/addScore';
 const TIMER = 33000;
 const SECONDS = 1000;
 const FOUR = 4;
+const FIVE = 5;
 const defaultScore = 10;
 
 class Trivia extends Component {
@@ -106,7 +107,7 @@ class Trivia extends Component {
       index: state.index + 1,
     }));
     clearInterval(this.idGamer);
-    this.startGame();
+    this.creatingGamePage();
     this.resetState();
   };
 
@@ -153,11 +154,18 @@ class Trivia extends Component {
   };
 
   render() {
-    const { invalidToken, category, question, alternatives, correctAnswer } = this.state;
+    const { invalidToken,
+      category,
+      question,
+      alternatives,
+      correctAnswer,
+      index,
+    } = this.state;
     const { buttonRed, buttonGreen, timer, questionDisabled, btnNextAppear } = this.state;
     return (
       <>
         {invalidToken && <Redirect to="/" />}
+        {index === FIVE && <Redirect to="feedback" />}
         <Header />
         <main className="center">
           <div>
@@ -166,14 +174,14 @@ class Trivia extends Component {
           </div>
           <div>
             <p>{timer}</p>
-            {alternatives.map((e, index) => (
-              <div key={ index } data-testid="answer-options">
+            {alternatives.map((e, quest) => (
+              <div key={ quest } data-testid="answer-options">
                 <button
                   type="button"
                   data-testid={
-                    e === correctAnswer ? 'correct-answer' : `wrong-answer-${index}`
+                    e === correctAnswer ? 'correct-answer' : `wrong-answer-${quest}`
                   }
-                  value={ e === correctAnswer ? 'correct' : `wrong-${index}` }
+                  value={ e === correctAnswer ? 'correct' : `wrong-${quest}` }
                   className={ e === correctAnswer ? buttonGreen : buttonRed }
                   onClick={ this.handleClick }
                   disabled={ questionDisabled }

@@ -28,7 +28,7 @@ class Header extends Component {
           alt="Imagem do Gravatar"
           data-testid="header-profile-picture"
         />
-        <h1 data-testid="header-player-name">{playerName}</h1>
+        <h1 data-testid="header-player-name">{ playerName }</h1>
         <p data-testid="header-score">{ score }</p>
       </header>
     );
