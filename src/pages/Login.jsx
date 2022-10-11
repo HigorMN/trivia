@@ -7,6 +7,9 @@ import ButtonConfig from '../components/buttonConfig';
 import gravatarEmail from '../redux/action/gravatarEmail';
 import callAPI from '../services/callAPI';
 
+import logoTrivia from '../images/logoTrivia.png';
+import iconeTrybe from '../images/iconeTrybe.png';
+
 class Login extends Component {
   state = {
     isDisabled: true,
@@ -41,35 +44,47 @@ class Login extends Component {
   render() {
     const { isDisabled, playerName, email, redirect } = this.state;
     return (
-      <main>
+      <main className="login-main-container center">
+        <img src={ logoTrivia } alt="Logo trivia" className="login-logo" />
         <form
           onSubmit={ this.handleSubmit }
+          className="login-form center"
         >
-          <input
-            type="email"
-            data-testid="input-gravatar-email"
-            required
-            name="email"
-            onChange={ this.handleChange }
-            value={ email }
-          />
-          <input
-            type="text"
-            data-testid="input-player-name"
-            required
-            name="playerName"
-            onChange={ this.handleChange }
-            value={ playerName }
-          />
+          <div className="login-container-input center">
+            <input
+              type="email"
+              data-testid="input-gravatar-email"
+              required
+              name="email"
+              onChange={ this.handleChange }
+              value={ email }
+              placeholder="Qual é o seu e-mail do gravatar?"
+              className="login-input"
+            />
+          </div>
+          <div className="login-container-input center">
+            <input
+              type="text"
+              data-testid="input-player-name"
+              required
+              name="playerName"
+              onChange={ this.handleChange }
+              value={ playerName }
+              placeholder="Qual é o seu nome?"
+              className="login-input"
+            />
+          </div>
           <button
             type="submit"
             data-testid="btn-play"
             disabled={ isDisabled }
+            className="login-button"
           >
-            Play
+            JOGAR
           </button>
+          <ButtonConfig />
         </form>
-        <ButtonConfig />
+        <img src={ iconeTrybe } alt="icone trybe" className="login-icone-trybe" />
         {redirect && <Redirect to="/trivia" />}
       </main>
     );
