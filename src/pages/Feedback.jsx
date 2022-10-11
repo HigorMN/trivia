@@ -8,7 +8,7 @@ const minAnswer = 3;
 class Feedback extends Component {
   playAgain = () => {
     const { history } = this.props;
-    history.push('./');
+    history.push('/');
   };
 
   ranking = () => {
