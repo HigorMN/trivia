@@ -5,6 +5,7 @@ import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
 import getQuestionsAPI from '../services/getQuestionsAPI';
 import { addScore } from '../redux/action/addScore';
+import { answerAction } from '../redux/action/corrects';
 
 const TIMER = 33000;
 const SECONDS = 1000;
@@ -25,6 +26,7 @@ class Trivia extends Component {
     questionDisabled: false,
     difficulty: '',
     btnNextAppear: false,
+    corrects: 0,
   };
 
   componentDidMount() {
@@ -146,6 +148,12 @@ class Trivia extends Component {
     if (name === 'correct') {
       const { dispatch } = this.props;
       dispatch(addScore(this.getScore()));
+      this.setState((state) => ({
+        corrects: state.corrects + 1,
+      }), () => {
+        const { corrects } = this.state;
+        dispatch(answerAction(corrects));
+      });
     }
   };
 
