@@ -12,7 +12,7 @@ describe('Testando a tela de FeedBack', () => {
       history.push('/feedback')
     })
 
-    const btnAgain = screen.getByRole('button', { name: /play again/i})
+    const btnAgain = screen.getByRole('button', { name: /jogar novamente/i})
 
     expect(history.location.pathname).toBe('/feedback')
     userEvent.click(btnAgain)
@@ -26,7 +26,7 @@ describe('Testando a tela de FeedBack', () => {
       history.push('/feedback')
     })
 
-    const btnRank = screen.getByRole('button', {  name: /ranking/i})
+    const btnRank = screen.getByRole('button', {  name: /ver ranking/i})
 
     expect(history.location.pathname).toBe('/feedback')
     userEvent.click(btnRank)
