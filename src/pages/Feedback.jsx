@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
+import rankingAction from '../redux/action/rankingAction';
 
 const minAnswer = 3;
 
@@ -12,8 +13,9 @@ class Feedback extends Component {
   };
 
   ranking = () => {
-    const { history } = this.props;
+    const { history, dispatch, score, email, playerName } = this.props;
     history.push('/ranking');
+    dispatch(rankingAction({ score, email, playerName }));
   };
 
   render() {
@@ -51,6 +53,8 @@ class Feedback extends Component {
 const mapStateToProps = (state) => ({
   score: state.player.score,
   assertions: state.player.assertions,
+  email: state.gravatar.email,
+  playerName: state.gravatar.name,
 });
 
 Feedback.propTypes = {
@@ -59,6 +63,9 @@ Feedback.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
+  dispatch: PropTypes.func.isRequired,
+  email: PropTypes.string.isRequired,
+  playerName: PropTypes.string.isRequired,
 };
 
 export default connect(mapStateToProps)(Feedback);
