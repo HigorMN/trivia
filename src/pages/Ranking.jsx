@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import md5 from 'crypto-js/md5';
 import restScore from '../redux/action';
+import { getPlayrsLocal } from '../services/saveLocal';
 
 class Ranking extends Component {
   goHome = () => {
@@ -12,7 +13,7 @@ class Ranking extends Component {
   };
 
   render() {
-    const { playrs } = this.props;
+    const playrs = getPlayrsLocal() || [];
     playrs.sort((a, b) => b.score - a.score);
     return (
       <main>
@@ -45,7 +46,6 @@ Ranking.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
-  playrs: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   dispatch: PropTypes.func.isRequired,
 };
 

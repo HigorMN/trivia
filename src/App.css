@@ -7,15 +7,11 @@ body {
   background: #41197f;
   box-sizing: border-box;
   color: white;
+  font-family: monospace;
 }
 
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 15vmin;
-  pointer-events: none;
+button:hover {
+  cursor: pointer;
 }
 
 .red-border {
@@ -81,11 +77,29 @@ body {
   justify-content: center;
 }
 
+.star-img {
+  width: 29px;
+}
+
+.bold1 {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.mg1 {
+  margin: 0 10px;
+}
+
+.bg-none {
+  background: none;
+  border: none;
+}
+
+
 /* 🏠🔽 LOGIN CSS 🔽🏠 */
 .login-main-container {
   background: url('./images/backgroundLogin.png') no-repeat;
   background-attachment: fixed;
-  background-blend-mode: multiply;
   background-size: cover;
   flex-direction: column;
   height: 100vh;
@@ -152,10 +166,52 @@ body {
 }
 
 .login-logo {
+  animation: shake infinite 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
   margin: 6px;
   width: 230px;
 }
 
 .login-icone-trybe {
   margin: 36px;
+}
+
+
+/* 🔽 HEADER 🔽 */
+.header {
+  align-items: center;
+  background-color: white;
+  color: black;
+  display: flex;
+  height: 100px;
+  justify-content: right;
+}
+
+.header-img-gravatar {
+  border-radius: 50%;
+  margin: 0 13px;
+  width: 40px;
+}
+
+.header-player-name {
+  font-size: 18px;
+  font-weight: 400;
+  margin-right: 50px;
+}
+
+.header-score-container {
+  margin-right: 70px;
+}
+
+.header-nav-link {
+  margin-right: 50px;
+}
+
+
+/* 🔽 TRIVIA 🔽 */
+.trivia-main-container {
+  background: url('./images/backgroundTrivia.png') no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  height: 89.2vh;
+  width: 100%;
 }

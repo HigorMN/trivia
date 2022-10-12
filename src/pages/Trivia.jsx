@@ -179,13 +179,17 @@ class Trivia extends Component {
         {invalidToken && <Redirect to="/" />}
         {index === FIVE && <Redirect to="feedback" />}
         <Header />
-        <main className="center">
+        <main className="center trivia-main-container">
           <div>
-            <h3 data-testid="question-category">{category}</h3>
-            <p data-testid="question-text">{question}</p>
+            <div>
+              <h3 data-testid="question-category">{category}</h3>
+            </div>
+            <div>
+              <p data-testid="question-text">{question}</p>
+              <p>{timer}</p>
+            </div>
           </div>
           <div>
-            <p>{timer}</p>
             {alternatives.map((e, quest) => (
               <div key={ quest } data-testid="answer-options">
                 <button

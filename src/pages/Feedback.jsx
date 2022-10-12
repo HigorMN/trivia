@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
-import rankingAction from '../redux/action/rankingAction';
+import { createLocal, saveLocal } from '../services/saveLocal';
 
 const minAnswer = 3;
 
@@ -13,9 +13,10 @@ class Feedback extends Component {
   };
 
   ranking = () => {
-    const { history, dispatch, score, email, playerName } = this.props;
+    const { history, score, email, playerName } = this.props;
+    createLocal();
+    saveLocal({ score, email, playerName });
     history.push('/ranking');
-    dispatch(rankingAction({ score, email, playerName }));
   };
 
   render() {
@@ -63,7 +64,6 @@ Feedback.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
-  dispatch: PropTypes.func.isRequired,
   email: PropTypes.string.isRequired,
   playerName: PropTypes.string.isRequired,
 };
