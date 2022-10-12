@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import md5 from 'crypto-js/md5';
 import Header from '../components/Header';
+import restScore from '../redux/action';
 import { createLocal, saveLocal } from '../services/saveLocal';
 
 import logoTrivia from '../images/logoTrivia.png';
@@ -11,8 +12,9 @@ const minAnswer = 3;
 
 class Feedback extends Component {
   playAgain = () => {
-    const { history } = this.props;
+    const { history, dispatch } = this.props;
     history.push('/');
+    dispatch(restScore());
   };
 
   ranking = () => {
@@ -105,6 +107,7 @@ Feedback.propTypes = {
   }).isRequired,
   email: PropTypes.string.isRequired,
   playerName: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps)(Feedback);
