@@ -27,6 +27,7 @@ class Trivia extends Component {
     difficulty: '',
     btnNextAppear: false,
     corrects: 0,
+    randindex: 0,
   };
 
   componentDidMount() {
@@ -74,8 +75,11 @@ class Trivia extends Component {
   };
 
   questionAPI = (reponseTriviaAPI) => {
-    const { index } = this.state;
+    const { index, randindex } = this.state;
     const randomIndex = Math.floor(Math.random() * reponseTriviaAPI.length);
+    this.setState({ randindex: randomIndex });
+    const indexValid = randomIndex !== randindex ? randomIndex : randomIndex - 1;
+
     this.setState({
       difficulty: reponseTriviaAPI[index].difficulty,
     });
@@ -88,7 +92,7 @@ class Trivia extends Component {
     } = reponseTriviaAPI[index];
 
     const alternatives = [...incorrectAnswers];
-    alternatives.splice(randomIndex, 0, correctAnswer);
+    alternatives.splice(indexValid, 0, correctAnswer);
     this.setState({
       category, question, alternatives, correctAnswer });
   };
@@ -200,17 +204,14 @@ class Trivia extends Component {
             ))}
           </div>
           <div>
-            {
-              btnNextAppear
-            && (
+            { btnNextAppear && (
               <button
                 type="button"
                 data-testid="btn-next"
                 onClick={ this.handleNext }
               >
                 Next
-              </button>)
-            }
+              </button>)}
           </div>
         </main>
       </>
