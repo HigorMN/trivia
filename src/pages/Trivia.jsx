@@ -6,12 +6,18 @@ import Header from '../components/Header';
 import getQuestionsAPI from '../services/getQuestionsAPI';
 import { addScore } from '../redux/action/addScore';
 import { answerAction } from '../redux/action/corrects';
+import timerImg from '../images/timer.png';
+import logoTrivia from '../images/logoTrivia.png';
+import iconeTrybe from '../images/iconeTrybe.png';
+import certo from '../images/certo.png';
+import errado from '../images/errado.png';
 
 const TIMER = 33000;
 const SECONDS = 1000;
 const FOUR = 4;
 const FIVE = 5;
 const defaultScore = 10;
+const abcd = ['A', 'B', 'C', 'D'];
 
 class Trivia extends Component {
   state = {
@@ -40,82 +46,11 @@ class Trivia extends Component {
     if (timer === 0) {
       clearInterval(this.idTimer);
     }
-    if (index === FOUR) {
+    if (index === FOUR && timer === 0) {
       clearInterval(this.idGamer);
+      clearInterval(this.idTimer);
     }
   }
-
-  creatingGamePage = async () => {
-    const responseTriviaAPI = await getQuestionsAPI();
-    this.setState({ data: responseTriviaAPI }, () => {
-      const { data } = this.state;
-      if (data.length === 0) {
-        this.setState({ invalidToken: true });
-        localStorage.removeItem('token');
-      } else {
-        this.startGame();
-      }
-    });
-  };
-
-  startGame = () => {
-    const { data } = this.state;
-
-    this.questionAPI(data);
-
-    this.idGamer = setInterval(() => {
-      this.setState((state) => ({
-        index: state.index + 1,
-      }), () => {
-        this.resetState();
-        this.questionAPI(data);
-        this.countdownTimer();
-      });
-    }, TIMER);
-  };
-
-  questionAPI = (reponseTriviaAPI) => {
-    const { index, randindex } = this.state;
-    const randomIndex = Math.floor(Math.random() * reponseTriviaAPI.length);
-    this.setState({ randindex: randomIndex });
-    const indexValid = randomIndex !== randindex ? randomIndex : randomIndex - 1;
-
-    this.setState({
-      difficulty: reponseTriviaAPI[index].difficulty,
-    });
-
-    const {
-      category,
-      question,
-      correct_answer: correctAnswer,
-      incorrect_answers: incorrectAnswers,
-    } = reponseTriviaAPI[index];
-
-    const alternatives = [...incorrectAnswers];
-    alternatives.splice(indexValid, 0, correctAnswer);
-    this.setState({
-      category, question, alternatives, correctAnswer });
-  };
-
-  handleClick = (e) => {
-    this.setState({ buttonGreen: 'button-green', buttonRed: 'button-red' });
-    this.checkAnswer(e);
-    this.setState({
-      buttonGreen: 'button-green',
-      buttonRed: 'button-red',
-      btnNextAppear: true,
-      questionDisabled: true,
-    });
-  };
-
-  handleNext = () => {
-    this.setState((state) => ({
-      index: state.index + 1,
-    }));
-    clearInterval(this.idGamer);
-    this.creatingGamePage();
-    this.resetState();
-  };
 
   resetState = () => {
     this.setState({
@@ -127,24 +62,77 @@ class Trivia extends Component {
     });
   };
 
+  startGame = () => {
+    const { data } = this.state;
+    this.questionAPI(data);
+
+    this.idGamer = setInterval(() => {
+      this.setState((state) => ({ index: state.index + 1 }), () => {
+        this.resetState();
+        this.questionAPI(data);
+        this.countdownTimer();
+      });
+    }, TIMER);
+  };
+
+  creatingGamePage = async () => {
+    const responseTriviaAPI = await getQuestionsAPI();
+    this.setState({ data: responseTriviaAPI }, () => {
+      const { data } = this.state;
+      if (data.length === 0) {
+        this.setState({ invalidToken: true });
+        localStorage.removeItem('token');
+      } else { this.startGame(); }
+    });
+  };
+
+  questionAPI = (reponseTriviaAPI) => {
+    const { index, randindex } = this.state;
+    const randomIndex = Math.floor(Math.random() * reponseTriviaAPI.length);
+    this.setState({ randindex: randomIndex });
+    const indexValid = randomIndex !== randindex ? randomIndex : randomIndex - 1;
+    this.setState({ difficulty: reponseTriviaAPI[index].difficulty });
+
+    const { category, question, correct_answer: correctAnswer,
+      incorrect_answers: incorrectAnswers } = reponseTriviaAPI[index];
+    const alternatives = [...incorrectAnswers];
+
+    alternatives.splice(indexValid, 0, correctAnswer);
+    this.setState({ category, question, alternatives, correctAnswer });
+  };
+
+  handleClickAnswer = (event) => {
+    this.setState({ buttonGreen: 'button-green', buttonRed: 'button-red' });
+    this.checkAnswer(event);
+    this.setState({
+      buttonGreen: 'button-green',
+      buttonRed: 'button-red',
+      btnNextAppear: true,
+      questionDisabled: true,
+    });
+    clearInterval(this.idGamer);
+  };
+
+  handleNext = () => {
+    this.setState((state) => ({ index: state.index + 1 }));
+    clearInterval(this.idGamer);
+    this.creatingGamePage();
+    this.resetState();
+  };
+
   countdownTimer = () => {
     this.idTimer = setInterval(() => {
-      this.setState((state) => ({
-        timer: state.timer - 1,
-      }), () => {
+      this.setState((state) => ({ timer: state.timer - 1 }), () => {
         const { timer } = this.state;
-        this.setState({ questionDisabled: timer === 0 });
+        this.setState((s) => ({
+          questionDisabled: timer === 0 || s.questionDisabled }));
       });
     }, SECONDS);
   };
 
   getScore = () => {
     const { timer, difficulty } = this.state;
-    const score = {
-      easy: 1,
-      medium: 2,
-      hard: 3,
-    };
+    const score = { easy: 1, medium: 2, hard: 3 };
     return defaultScore + (timer * score[difficulty]);
   };
 
@@ -152,9 +140,7 @@ class Trivia extends Component {
     if (name === 'correct') {
       const { dispatch } = this.props;
       dispatch(addScore(this.getScore()));
-      this.setState((state) => ({
-        corrects: state.corrects + 1,
-      }), () => {
+      this.setState((state) => ({ corrects: state.corrects + 1 }), () => {
         const { corrects } = this.state;
         dispatch(answerAction(corrects));
       });
@@ -166,56 +152,71 @@ class Trivia extends Component {
   };
 
   render() {
-    const { invalidToken,
-      category,
-      question,
-      alternatives,
-      correctAnswer,
-      index,
-    } = this.state;
+    const { invalidToken, category, question, alternatives, correctAnswer } = this.state;
     const { buttonRed, buttonGreen, timer, questionDisabled, btnNextAppear } = this.state;
+    const { index } = this.state;
     return (
       <>
         {invalidToken && <Redirect to="/" />}
         {index === FIVE && <Redirect to="feedback" />}
         <Header />
         <main className="center trivia-main-container">
-          <div>
-            <div>
+          <div className="triviar-left-container center">
+            <img src={ logoTrivia } alt="Logo Trivia" className="trivia-logo" />
+            <div className="trivia-question-category center">
               <h3 data-testid="question-category">{category}</h3>
             </div>
-            <div>
-              <p data-testid="question-text">{question}</p>
-              <p>{timer}</p>
+            <div className="trivia-question-container center">
+              <p data-testid="question-text" className="trivia-question">{question}</p>
             </div>
+            <div className="trivia-timer-container center">
+              <img src={ timerImg } alt="timer" />
+              <p className="mg1">Tempo:</p>
+              <p>{timer}</p>
+              <span>s</span>
+            </div>
+            <img src={ iconeTrybe } alt="Logo trybe" className="trivia-logo-trybe" />
           </div>
-          <div>
-            {alternatives.map((e, quest) => (
-              <div key={ quest } data-testid="answer-options">
+          <div className="trivia-rigth-container center">
+            <div className="trivia-answer-container center">
+              {alternatives.map((e, quest) => (
+                <div
+                  key={ quest }
+                  data-testid="answer-options"
+                  className="trivia-container-button"
+                >
+                  {btnNextAppear ? (
+                    <div className={ `${e === correctAnswer ? 'cert' : 'err'} center` }>
+                      <img src={ e === correctAnswer ? certo : errado } alt="Imagem" />
+                    </div>)
+                    : (<div className="trivia-abc center"><p>{abcd[quest]}</p></div>)}
+                  <button
+                    type="button"
+                    data-testid={
+                      e === correctAnswer ? 'correct-answer' : `wrong-answer-${quest}`
+                    }
+                    value={ e === correctAnswer ? 'correct' : `wrong-${quest}` }
+                    className={ `${e === correctAnswer
+                      ? buttonGreen : buttonRed} button-answer-options center` }
+                    onClick={ this.handleClickAnswer }
+                    disabled={ questionDisabled }
+                  >
+                    {e}
+                  </button>
+                </div>
+              ))}
+            </div>
+            <div className="trivia-button-next-container">
+              { (btnNextAppear || timer === 0) && (
                 <button
                   type="button"
-                  data-testid={
-                    e === correctAnswer ? 'correct-answer' : `wrong-answer-${quest}`
-                  }
-                  value={ e === correctAnswer ? 'correct' : `wrong-${quest}` }
-                  className={ e === correctAnswer ? buttonGreen : buttonRed }
-                  onClick={ this.handleClick }
-                  disabled={ questionDisabled }
+                  data-testid="btn-next"
+                  onClick={ this.handleNext }
+                  className="trivia-button-next"
                 >
-                  {e}
-                </button>
-              </div>
-            ))}
-          </div>
-          <div>
-            { btnNextAppear && (
-              <button
-                type="button"
-                data-testid="btn-next"
-                onClick={ this.handleNext }
-              >
-                Next
-              </button>)}
+                  PRÓXIMA
+                </button>)}
+            </div>
           </div>
         </main>
       </>
