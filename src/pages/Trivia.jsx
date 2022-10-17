@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
 import getQuestionsAPI from '../services/getQuestionsAPI';
 import { addScore } from '../redux/action/addScore';
@@ -22,7 +21,6 @@ const abcd = ['A', 'B', 'C', 'D'];
 
 class Trivia extends Component {
   state = {
-    invalidToken: false,
     category: '',
     question: '',
     index: 0,
@@ -64,6 +62,19 @@ class Trivia extends Component {
     });
   };
 
+  creatingGamePage = async () => {
+    this.setState({ isloading: true });
+    const responseTriviaAPI = await getQuestionsAPI();
+    this.setState({ data: responseTriviaAPI, isloading: false }, () => {
+      const { data } = this.state;
+      if (data.length === 0) {
+        const { history } = this.props;
+        localStorage.removeItem('token');
+        history.push('/');
+      } else { this.startGame(); }
+    });
+  };
+
   startGame = () => {
     const { data } = this.state;
     this.questionAPI(data);
@@ -77,27 +88,15 @@ class Trivia extends Component {
     }, TIMER);
   };
 
-  creatingGamePage = async () => {
-    this.setState({ isloading: true });
-    const responseTriviaAPI = await getQuestionsAPI();
-    this.setState({ data: responseTriviaAPI, isloading: false }, () => {
-      const { data } = this.state;
-      if (data.length === 0) {
-        this.setState({ invalidToken: true });
-        localStorage.removeItem('token');
-      } else { this.startGame(); }
-    });
-  };
-
-  questionAPI = (reponseTriviaAPI) => {
+  questionAPI = (data) => {
     const { index, randindex } = this.state;
-    const randomIndex = Math.floor(Math.random() * reponseTriviaAPI.length);
+    const randomIndex = Math.floor(Math.random() * data.length);
     this.setState({ randindex: randomIndex });
     const indexValid = randomIndex !== randindex ? randomIndex : randomIndex - 1;
-    this.setState({ difficulty: reponseTriviaAPI[index].difficulty });
+    this.setState({ difficulty: data[index].difficulty });
 
     const { category, question, correct_answer: correctAnswer,
-      incorrect_answers: incorrectAnswers } = reponseTriviaAPI[index];
+      incorrect_answers: incorrectAnswers } = data[index];
     const alternatives = [...incorrectAnswers];
 
     alternatives.splice(indexValid, 0, correctAnswer);
@@ -117,9 +116,16 @@ class Trivia extends Component {
   };
 
   handleNext = () => {
-    this.setState((state) => ({ index: state.index + 1 }));
-    clearInterval(this.idGamer);
-    this.creatingGamePage();
+    this.setState((state) => ({ index: state.index + 1 }), () => {
+      const { index } = this.state;
+      const { history } = this.props;
+      if (index === FIVE) {
+        history.push('/feedback');
+      } else {
+        clearInterval(this.idGamer);
+        this.startGame();
+      }
+    });
     this.resetState();
   };
 
@@ -157,13 +163,10 @@ class Trivia extends Component {
   c = (e, correctAnswer, cert, err) => (e === correctAnswer ? cert : err);
 
   render() {
-    const { invalidToken, category, question, alternatives, correctAnswer } = this.state;
+    const { isloading, category, question, alternatives, correctAnswer } = this.state;
     const { buttonRed, buttonGreen, timer, questionDisabled, btnNextAppear } = this.state;
-    const { index, isloading } = this.state;
     return (
       <>
-        {invalidToken && <Redirect to="/" />}
-        {index === FIVE && <Redirect to="feedback" />}
         <Header />
         {isloading ? (<Loading />) : (
           <main className="center trivia-main-container">
@@ -237,6 +240,7 @@ class Trivia extends Component {
 
 Trivia.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  history: PropTypes.shape({ push: PropTypes.func.isRequired }).isRequired,
 };
 
 export default connect()(Trivia);
