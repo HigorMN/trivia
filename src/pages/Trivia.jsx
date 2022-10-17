@@ -11,6 +11,7 @@ import logoTrivia from '../images/logoTrivia.png';
 import iconeTrybe from '../images/iconeTrybe.png';
 import certo from '../images/certo.png';
 import errado from '../images/errado.png';
+import Loading from '../components/loading';
 
 const TIMER = 33000;
 const SECONDS = 1000;
@@ -34,6 +35,7 @@ class Trivia extends Component {
     btnNextAppear: false,
     corrects: 0,
     randindex: 0,
+    isloading: true,
   };
 
   componentDidMount() {
@@ -76,8 +78,9 @@ class Trivia extends Component {
   };
 
   creatingGamePage = async () => {
+    this.setState({ isloading: true });
     const responseTriviaAPI = await getQuestionsAPI();
-    this.setState({ data: responseTriviaAPI }, () => {
+    this.setState({ data: responseTriviaAPI, isloading: false }, () => {
       const { data } = this.state;
       if (data.length === 0) {
         this.setState({ invalidToken: true });
@@ -151,74 +154,82 @@ class Trivia extends Component {
     this.scoreUpdate(e.target.value);
   };
 
+  c = (e, correctAnswer, cert, err) => (e === correctAnswer ? cert : err);
+
   render() {
     const { invalidToken, category, question, alternatives, correctAnswer } = this.state;
     const { buttonRed, buttonGreen, timer, questionDisabled, btnNextAppear } = this.state;
-    const { index } = this.state;
+    const { index, isloading } = this.state;
     return (
       <>
         {invalidToken && <Redirect to="/" />}
         {index === FIVE && <Redirect to="feedback" />}
         <Header />
-        <main className="center trivia-main-container">
-          <div className="triviar-left-container center">
-            <img src={ logoTrivia } alt="Logo Trivia" className="trivia-logo" />
-            <div className="trivia-question-category center">
-              <h3 data-testid="question-category">{category}</h3>
+        {isloading ? (<Loading />) : (
+          <main className="center trivia-main-container">
+            <div className="triviar-left-container center">
+              <img src={ logoTrivia } alt="Logo Trivia" className="trivia-logo" />
+              <div className="trivia-question-category center">
+                <h3 data-testid="question-category">{category}</h3>
+              </div>
+              <div className="trivia-question-container center">
+                <p data-testid="question-text" className="trivia-question">{question}</p>
+              </div>
+              <div className="trivia-timer-container center">
+                <img src={ timerImg } alt="timer" />
+                <p className="mg1">Tempo:</p>
+                <p>{timer}</p>
+                <span>s</span>
+              </div>
+              <img src={ iconeTrybe } alt="Logo trybe" className="trivia-logo-trybe" />
             </div>
-            <div className="trivia-question-container center">
-              <p data-testid="question-text" className="trivia-question">{question}</p>
-            </div>
-            <div className="trivia-timer-container center">
-              <img src={ timerImg } alt="timer" />
-              <p className="mg1">Tempo:</p>
-              <p>{timer}</p>
-              <span>s</span>
-            </div>
-            <img src={ iconeTrybe } alt="Logo trybe" className="trivia-logo-trybe" />
-          </div>
-          <div className="trivia-rigth-container center">
-            <div className="trivia-answer-container center">
-              {alternatives.map((e, quest) => (
-                <div
-                  key={ quest }
-                  data-testid="answer-options"
-                  className="trivia-container-button"
-                >
-                  {btnNextAppear ? (
-                    <div className={ `${e === correctAnswer ? 'cert' : 'err'} center` }>
-                      <img src={ e === correctAnswer ? certo : errado } alt="Imagem" />
-                    </div>)
-                    : (<div className="trivia-abc center"><p>{abcd[quest]}</p></div>)}
+            <div className="trivia-rigth-container center">
+              <div className="trivia-answer-container center">
+                {alternatives.map((e, quest) => (
+                  <div
+                    key={ quest }
+                    data-testid="answer-options"
+                    className="trivia-container-button"
+                  >
+                    {btnNextAppear ? (
+                      <div
+                        className={ `${this.c(e, correctAnswer, 'cert', 'err')} center` }
+                      >
+                        <img
+                          src={ this.c(e, correctAnswer, certo, errado) }
+                          alt="Imagem"
+                        />
+                      </div>)
+                      : (<div className="trivia-abc center"><p>{abcd[quest]}</p></div>)}
+                    <button
+                      type="button"
+                      data-testid={
+                        e === correctAnswer ? 'correct-answer' : `wrong-answer-${quest}`
+                      }
+                      value={ this.c(e, correctAnswer, 'correct', `wrong-${quest}`) }
+                      className={ `${e === correctAnswer
+                        ? buttonGreen : buttonRed} button-answer-options center` }
+                      onClick={ this.handleClickAnswer }
+                      disabled={ questionDisabled }
+                    >
+                      {e}
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className="trivia-button-next-container">
+                { (btnNextAppear || timer === 0) && (
                   <button
                     type="button"
-                    data-testid={
-                      e === correctAnswer ? 'correct-answer' : `wrong-answer-${quest}`
-                    }
-                    value={ e === correctAnswer ? 'correct' : `wrong-${quest}` }
-                    className={ `${e === correctAnswer
-                      ? buttonGreen : buttonRed} button-answer-options center` }
-                    onClick={ this.handleClickAnswer }
-                    disabled={ questionDisabled }
+                    data-testid="btn-next"
+                    onClick={ this.handleNext }
+                    className="trivia-button-next"
                   >
-                    {e}
-                  </button>
-                </div>
-              ))}
+                    PRÓXIMA
+                  </button>)}
+              </div>
             </div>
-            <div className="trivia-button-next-container">
-              { (btnNextAppear || timer === 0) && (
-                <button
-                  type="button"
-                  data-testid="btn-next"
-                  onClick={ this.handleNext }
-                  className="trivia-button-next"
-                >
-                  PRÓXIMA
-                </button>)}
-            </div>
-          </div>
-        </main>
+          </main>)}
       </>
     );
   }
