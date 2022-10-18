@@ -45,6 +45,7 @@ describe('Testando a tela do Jogo', () => {
     
     const incorrectAnswer = screen.getAllByTestId(/wrong-answer/i);
     await screen.findByTestId("btn-next", {}, {timeout: 35000});
+
     
     for(let index = 0; index < 4; index += 1){
       userEvent.click(screen.getByTestId('correct-answer'));

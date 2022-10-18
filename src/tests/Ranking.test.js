@@ -37,6 +37,6 @@ describe('testando a tela de ranking', () => {
 
     expect(playerName).toBeInTheDocument();
     expect(playerscore).toBeInTheDocument();
-
+    
   })
 })
