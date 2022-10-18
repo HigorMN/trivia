@@ -5,6 +5,7 @@ const callAPI = async () => {
     const response = await (await fetch(endPoint)).json();
     const { token } = response;
     localStorage.setItem('token', token);
+    return response;
   }
 };
 

@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 import ButtonConfig from '../components/buttonConfig';
 import gravatarEmail from '../redux/action/gravatarEmail';
 import callAPI from '../services/callAPI';
@@ -85,10 +84,8 @@ class Login extends Component {
           </button>
           <ButtonConfig />
         </form>
-        <Link to="/participantes">
-          <img src={ iconeTrybe } alt="icone trybe" className="login-icone-trybe" />
-        </Link>
-        {redirect && <Redirect to="/trivia" />}
+        <img src={ iconeTrybe } alt="icone trybe" className="login-icone-trybe" />
+        {redirect && <Redirect to="/game" />}
       </main>
     );
   }

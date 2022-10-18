@@ -12,14 +12,12 @@ import certo from '../images/certo.png';
 import errado from '../images/errado.png';
 import Loading from '../components/loading';
 
-const TIMER = 33000;
 const SECONDS = 1000;
-const FOUR = 4;
 const FIVE = 5;
 const defaultScore = 10;
 const abcd = ['A', 'B', 'C', 'D'];
 
-class Trivia extends Component {
+class Game extends Component {
   state = {
     category: '',
     question: '',
@@ -42,12 +40,8 @@ class Trivia extends Component {
   }
 
   componentDidUpdate() {
-    const { timer, index } = this.state;
+    const { timer } = this.state;
     if (timer === 0) {
-      clearInterval(this.idTimer);
-    }
-    if (index === FOUR && timer === 0) {
-      clearInterval(this.idGamer);
       clearInterval(this.idTimer);
     }
   }
@@ -65,27 +59,22 @@ class Trivia extends Component {
   creatingGamePage = async () => {
     this.setState({ isloading: true });
     const responseTriviaAPI = await getQuestionsAPI();
-    this.setState({ data: responseTriviaAPI, isloading: false }, () => {
+    this.setState({ data: responseTriviaAPI }, () => {
       const { data } = this.state;
       if (data.length === 0) {
         const { history } = this.props;
         localStorage.removeItem('token');
         history.push('/');
-      } else { this.startGame(); }
+      } else {
+        this.setState({ isloading: false });
+        this.startGame();
+      }
     });
   };
 
   startGame = () => {
     const { data } = this.state;
     this.questionAPI(data);
-
-    this.idGamer = setInterval(() => {
-      this.setState((state) => ({ index: state.index + 1 }), () => {
-        this.resetState();
-        this.questionAPI(data);
-        this.countdownTimer();
-      });
-    }, TIMER);
   };
 
   questionAPI = (data) => {
@@ -238,9 +227,9 @@ class Trivia extends Component {
   }
 }
 
-Trivia.propTypes = {
+Game.propTypes = {
   dispatch: PropTypes.func.isRequired,
   history: PropTypes.shape({ push: PropTypes.func.isRequired }).isRequired,
 };
 
-export default connect()(Trivia);
+export default connect()(Game);
