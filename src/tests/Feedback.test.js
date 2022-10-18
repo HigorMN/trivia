@@ -52,8 +52,7 @@ describe('Testando a tela de FeedBack', () => {
     const btnNext = screen.getByTestId('btn-next');
     userEvent.click(btnNext);
 
-    const { pathname } = history.location;
-    expect(pathname).toBe('/feedback');
+    expect(history.location.pathname).toBe('/feedback');
     expect(screen.getByText(/well done!/i)).toBeInTheDocument()
   })
 })

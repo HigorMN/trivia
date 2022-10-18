@@ -59,7 +59,6 @@ describe('Testando a tela do Jogo', () => {
     const btnNext = screen.getByTestId('btn-next');
     userEvent.click(btnNext);
 
-    const { pathname } = history.location;
-    expect(pathname).toBe('/feedback');
+    expect(history.location.pathname).toBe('/feedback');
  })
 });
