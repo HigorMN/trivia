@@ -64,7 +64,7 @@ class Game extends Component {
       if (data.length === 0) {
         const { history } = this.props;
         localStorage.removeItem('token');
-        history.push('/');
+        history.push('/trivia/');
       } else {
         this.setState({ isloading: false });
         this.startGame();
@@ -109,7 +109,7 @@ class Game extends Component {
       const { index } = this.state;
       const { history } = this.props;
       if (index === FIVE) {
-        history.push('/feedback');
+        history.push('/trivia/feedback');
       } else {
         clearInterval(this.idGamer);
         this.startGame();

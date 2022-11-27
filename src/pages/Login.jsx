@@ -85,7 +85,7 @@ class Login extends Component {
           <ButtonConfig />
         </form>
         <img src={ iconeTrybe } alt="icone trybe" className="login-icone-trybe" />
-        {redirect && <Redirect to="/game" />}
+        {redirect && <Redirect to="/trivia/game" />}
       </main>
     );
   }

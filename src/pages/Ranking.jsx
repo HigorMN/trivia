@@ -11,7 +11,7 @@ import StarImage from '../components/StarImage';
 class Ranking extends Component {
   goHome = () => {
     const { history, dispatch } = this.props;
-    history.push('/');
+    history.push('/trivia/');
     dispatch(restScore());
   };
 

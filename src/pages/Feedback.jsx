@@ -13,7 +13,7 @@ const minAnswer = 3;
 class Feedback extends Component {
   playAgain = () => {
     const { history, dispatch } = this.props;
-    history.push('/');
+    history.push('/trivia/');
     dispatch(restScore());
   };
 
@@ -21,7 +21,7 @@ class Feedback extends Component {
     const { history, score, email, playerName } = this.props;
     createLocal();
     saveLocal({ score, email, playerName });
-    history.push('/ranking');
+    history.push('/trivia/ranking');
   };
 
   render() {

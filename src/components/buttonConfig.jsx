@@ -17,7 +17,7 @@ export default class ButtonConfig extends Component {
     return (
       <>
         {
-          clickButton && <Redirect to="/config" />
+          clickButton && <Redirect to="/trivia/config" />
         }
         <button
           type="button"
